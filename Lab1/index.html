@@ -237,6 +237,23 @@
             return result;
         }
 
+        function getCorrectInput(key) {
+            let result = "";
+            for (let i = 0; i < key.length; i++) {
+                if (ord(key[i]) !== -1 || key[i] === '?') {
+                    result += key[i];
+                }
+            }
+            return result;
+        }
+
+        function cleanEnd(str) {
+         while (str.endsWith("?")) {
+             str = str.slice(0, -1);
+         }
+         return str;
+        }
+
         function encryptText() {
             const inputText = document.getElementById('source-text').value;
             const dropdown = document.getElementById('dropdown');
@@ -256,7 +273,7 @@
                     alert("Ошибка!!!\nКлюч(и) полностью не корректный!");
                     return;
                 }
-                result = columnsMethod(key, key2, inputText, true);
+                result = columnsMethod(key, key2, getCorrectInput(inputText), true);
             }
             if (dropdown.value === "vigener-cipher") {
                 result = vigenerCipher(key, inputText, true);
@@ -285,7 +302,7 @@
                     alert("Ошибка!!!\nКлюч(и) полностью не корректный!");
                     return;
                 }
-                result = columnsMethod(key, key2, inputText, false);
+                result = columnsMethod(key, key2, getCorrectInput(inputText), false);
             }
             if (dropdown.value === "vigener-cipher") {
                 result = vigenerCipher(key, inputText, false);
@@ -383,7 +400,7 @@
                     }
                     // заполняем пустоту
                     else {
-                        textLetters[i] = ' ';
+                        textLetters[i] = '?';
                     }
                     j += key.length;
                 }
@@ -441,7 +458,7 @@
                     const textLetters = text.substring(Math.min(j, text.length), Math.min(j + n, text.length)).split('');
                     // если не хватило символов из строки добавляем пробелы
                     while (textLetters.length < n) {
-                        textLetters.push(' ');
+                        textLetters.push('?');
                     }
                     j += n;
                     // определяем где он был до этого
@@ -460,8 +477,8 @@
 
 
             return isEncrypt ?
-                EncryptColumns(key2, EncryptColumns(key, text).trim()).trim() :
-                DecryptColumns(key2, DecryptColumns(key, text).trim()).trim();
+                cleanEnd(EncryptColumns(key2,  cleanEnd(EncryptColumns(key, text)))) :
+                cleanEnd(DecryptColumns(key2, cleanEnd(DecryptColumns(key, text))));
         }
     </script>
 </body>
